@@ -3,34 +3,36 @@ function getBrowser() {
 }
 
 function getCashuTokens() {
-  // const bodyText = document.documentElement.innerHTML;
-  const bodyText = document.body.innerHTML;
+  const bodyText = document.documentElement.innerHTML;
   const regex = /\b(cashuAeyJ0b2)\w+\b/gi;
   const matches = bodyText.match(regex) || [];
   return matches;
 }
 
+
 function findTextNodes(element, match) {
-  const textNodes = [];
+  const nodes = [];
   const walk = document.createTreeWalker(
     element,
     NodeFilter.SHOW_TEXT,
     {
       acceptNode: (node) => {
         if (node.textContent.includes(match)) {
-          return NodeFilter.FILTER_ACCEPT;
+          const parent = node.parentNode;
+          if (parent.nodeType === Node.ELEMENT_NODE) {
+            nodes.push(parent);
+          }
+          return NodeFilter.FILTER_SKIP;
         }
-        return NodeFilter.FILTER_SKIP;
+        return NodeFilter.FILTER_ACCEPT;
       },
     },
     false
   );
 
-  while (walk.nextNode()) {
-    textNodes.push(walk.currentNode);
-  }
+  while (walk.nextNode()) {}
 
-  return textNodes;
+  return nodes;
 }
 
 function injectButtons(match, lightningAddress) {
@@ -134,15 +136,84 @@ function injectButtons(match, lightningAddress) {
   });
 }
 
-getBrowser().storage.local.get("lightningAddress", (data) => {
-  const lightningAddress = data.lightningAddress || "";
+// function init() {
+//   getBrowser().storage.local.get("lightningAddress", (data) => {
+//     const lightningAddress = data.lightningAddress || "";
 
+//     getBrowser().runtime.sendMessage({
+//       action: "getCashuTokens",
+//       data: getCashuTokens(),
+//     });
+
+//     getCashuTokens().forEach((match) => {
+//       injectButtons(match, lightningAddress);
+//     });
+//   });
+
+
+//   // Watch for changes to the DOM and call injectButtons() when new elements are added
+//   const observer = new MutationObserver((mutations) => {
+//     getCashuTokens().forEach((match) => {
+//       mutations.forEach((mutation) => {
+//         const newNodes = mutation.addedNodes;
+//         newNodes.forEach((node) => {
+//           if (node.nodeType === Node.TEXT_NODE) {
+//             if (node.textContent.includes(match)) {
+//               injectButtons(match, lightningAddress);
+//             }
+//           } else if (node.nodeType === Node.ELEMENT_NODE) {
+//             const textNodes = findTextNodes(node, match);
+//             textNodes.forEach((textNode) => {
+//               if (textNode.textContent.includes(match)) {
+//                 injectButtons(match, lightningAddress);
+//               }
+//             });
+//           }
+//         });
+//       });
+//     });
+//   });
+
+//   observer.observe(document.body, { childList: true, subtree: true });
+// }
+
+// init();
+
+
+function init() {
+  const lightningAddress = getBrowser().storage.local.get("lightningAddress") || ""
+    getCashuTokens().forEach((match) => {
+      injectButtons(match, lightningAddress);
+    });  
   getBrowser().runtime.sendMessage({
     action: "getCashuTokens",
     data: getCashuTokens(),
   });
 
-  getCashuTokens().forEach((match) => {
-    injectButtons(match, lightningAddress);
+  // Watch for changes to the DOM and call injectButtons() when new elements are added
+  const observer = new MutationObserver((mutations) => {
+    getCashuTokens().forEach((match) => {
+      mutations.forEach((mutation) => {
+        const newNodes = mutation.addedNodes;
+        newNodes.forEach((node) => {
+          if (node.nodeType === Node.TEXT_NODE) {
+            if (node.textContent.includes(match)) {
+              injectButtons(match, lightningAddress);
+            }
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const textNodes = findTextNodes(node, match);
+            textNodes.forEach((textNode) => {
+              if (textNode.textContent.includes(match)) {
+                injectButtons(match, lightningAddress);
+              }
+            });
+          }
+        });
+      });
+    });
   });
-});
+
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+init();
