@@ -1,5 +1,5 @@
 <p align="center">
-  	<img src="https://github.com/callebtc/nutgrab/raw/main/icons/icon128.png">
+  	<img src="https://github.com/callebtc/nutgrab/raw/main/resources/before-after.png">
 </p>
 
 # Cashu nutgrab
