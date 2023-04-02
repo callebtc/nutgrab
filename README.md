@@ -1,7 +1,7 @@
 # Cashu nutgrab
 A browser extension for redeeming Cashu tokens on the web 🫴🥜
 
-# Install
+## Install
 
 Clone this repository:
 
@@ -17,3 +17,7 @@ chrome://extensions
 ```
 
 Press the "Load unpacked" button on the top left and select the `nutgrab` folder you just cloned. 
+
+## Set up
+
+You can enter your Lightning address or LNURL-pay link in the extension window. 
