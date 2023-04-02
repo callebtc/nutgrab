@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "Cashu Token grabber",
+    "version": "1.0",
+    "description": "Finds words with 'cashuA' prefix and displays them in a popup.",
+    "permissions": ["activeTab", "scripting", "storage"],
+    "action": {
+      "default_popup": "index.html"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content-script.js"],
+        "exclude_matches": ["https://*.cashu.me/*", "https://*.nutstash.app/*"]
+      }
+    ]
+  }
+  
