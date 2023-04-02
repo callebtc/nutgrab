@@ -84,13 +84,47 @@ function injectButtons(match, lightningAddress) {
     span.style.marginRight = "5px";
     span.style.color = "white";
     span.style.fontFamily = "monospace";
-    span.textContent = "Cashu token"
+    span.style.padding = "0px 2px 2px 2px";   
+    span.textContent = "Cashu token";
     if (totalAmount > 0) {
       span.textContent += ` (${totalAmount} sats)`;
     }
+
+    // Create a span to hold the copy icon
+    const copyButton = document.createElement("span");
+    copyButton.style.marginLeft = "5px";
+    copyButton.style.marginRight = "5px";
+    copyButton.style.padding = "5px 8px";    
+    copyButton.style.fontSize = "8px";
+    copyButton.style.cursor = "pointer";
+    copyButton.style.border = "1px solid #9876c2";
+    copyButton.style.borderRadius = "10px";    
+    copyButton.style.color = "white";
+    copyButton.style.fontFamily = "monospace";
+    // copyButton.innerHTML = "&#x1f4cb;";
+    copyButton.textContent = "copy";
+
+    // Add an onclick event to copy the text and display "copied" text
+    copyButton.onclick = () => {
+      const tempInput = document.createElement("input");
+      tempInput.value = match;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      copyButton.textContent = "copied";
+      // copyButton.innerHTML = "copied &#x1f4cb;";
+
+      setTimeout(() => {
+        // copyButton.innerHTML = "&#x1f4cb;";
+        copyButton.textContent = "copy";
+      }, 10000);
+    };
+
     // Add the button and the matched text to the container
     container.appendChild(button);
     container.appendChild(span);
+    container.appendChild(copyButton);
 
     // Replace the original text node with the container
     parent.replaceChild(replacementNode, textNode);
