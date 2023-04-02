@@ -1,3 +1,7 @@
+<p align="center">
+  	<img src="https://github.com/callebtc/nutgrab/raw/main/icons/icon128.png">
+</p>
+
 # Cashu nutgrab
 A browser extension for redeeming Cashu tokens on the web 🫴🥜
 
