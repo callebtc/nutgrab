@@ -3,8 +3,9 @@ function getBrowser() {
 }
 
 function getCashuTokens() {
-  const bodyText = document.body.textContent;
-  const regex = /\bcashuAeyJ0b2\w+\b/gi;
+  // const bodyText = document.documentElement.innerHTML;
+  const bodyText = document.body.innerHTML;
+  const regex = /\b(cashuAeyJ0b2)\w+\b/gi;
   const matches = bodyText.match(regex) || [];
   return matches;
 }
