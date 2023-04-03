@@ -9,7 +9,6 @@ function getCashuTokens() {
   return matches;
 }
 
-
 function findTextNodes(element, match) {
   const nodes = [];
   const walk = document.createTreeWalker(
@@ -17,6 +16,12 @@ function findTextNodes(element, match) {
     NodeFilter.SHOW_TEXT,
     {
       acceptNode: (node) => {
+        if (
+          node.parentNode.tagName === "INPUT" ||
+          node.parentNode.tagName === "TEXTAREA"
+        ) {
+          return NodeFilter.FILTER_SKIP;
+        }
         if (node.textContent.includes(match)) {
           const parent = node.parentNode;
           if (parent.nodeType === Node.ELEMENT_NODE) {
@@ -87,7 +92,7 @@ function injectButtons(match, lightningAddress) {
     span.style.marginRight = "5px";
     span.style.color = "white";
     span.style.fontFamily = "monospace";
-    span.style.padding = "0px 2px 2px 2px";   
+    span.style.padding = "0px 2px 2px 2px";
     span.textContent = "Cashu token";
     if (totalAmount > 0) {
       span.textContent += ` (${totalAmount} sats)`;
@@ -97,11 +102,11 @@ function injectButtons(match, lightningAddress) {
     const copyButton = document.createElement("span");
     copyButton.style.marginLeft = "5px";
     copyButton.style.marginRight = "5px";
-    copyButton.style.padding = "5px 8px";    
+    copyButton.style.padding = "5px 8px";
     copyButton.style.fontSize = "8px";
     copyButton.style.cursor = "pointer";
     copyButton.style.border = "1px solid #9876c2";
-    copyButton.style.borderRadius = "10px";    
+    copyButton.style.borderRadius = "10px";
     copyButton.style.color = "white";
     copyButton.style.fontFamily = "monospace";
     // copyButton.innerHTML = "&#x1f4cb;";
@@ -150,7 +155,6 @@ function injectButtons(match, lightningAddress) {
 //     });
 //   });
 
-
 //   // Watch for changes to the DOM and call injectButtons() when new elements are added
 //   const observer = new MutationObserver((mutations) => {
 //     getCashuTokens().forEach((match) => {
@@ -179,12 +183,12 @@ function injectButtons(match, lightningAddress) {
 
 // init();
 
-
 function init() {
-  const lightningAddress = getBrowser().storage.local.get("lightningAddress") || ""
-    getCashuTokens().forEach((match) => {
-      injectButtons(match, lightningAddress);
-    });  
+  const lightningAddress =
+    getBrowser().storage.local.get("lightningAddress") || "";
+  getCashuTokens().forEach((match) => {
+    injectButtons(match, lightningAddress);
+  });
   getBrowser().runtime.sendMessage({
     action: "getCashuTokens",
     data: getCashuTokens(),
@@ -196,18 +200,25 @@ function init() {
       mutations.forEach((mutation) => {
         const newNodes = mutation.addedNodes;
         newNodes.forEach((node) => {
+          if (
+            node.parentNode.tagName === "INPUT" ||
+            node.parentNode.tagName === "TEXTAREA"
+          ) {
+            return;
+          }
           if (node.nodeType === Node.TEXT_NODE) {
             if (node.textContent.includes(match)) {
               injectButtons(match, lightningAddress);
             }
-          } else if (node.nodeType === Node.ELEMENT_NODE) {
-            const textNodes = findTextNodes(node, match);
-            textNodes.forEach((textNode) => {
-              if (textNode.textContent.includes(match)) {
-                injectButtons(match, lightningAddress);
-              }
-            });
-          }
+          } 
+          // else if (node.nodeType === Node.ELEMENT_NODE) {
+          //   const textNodes = findTextNodes(node, match);
+          //   textNodes.forEach((textNode) => {
+          //     if (textNode.textContent.includes(match)) {
+          //       injectButtons(match, lightningAddress);
+          //     }
+          //   });
+          // }
         });
       });
     });
