@@ -4,7 +4,7 @@ function getBrowser() {
 
 function getCashuTokens() {
   const bodyText = document.documentElement.innerHTML;
-  const regex = /\b(cashuAeyJ0b2)\w+\b/gi;
+  const regex = /(cashuA[A-Za-z0-9_-]{0,10000}={0,3})/gi;
   const matches = bodyText.match(regex) || [];
   return matches;
 }
@@ -17,8 +17,9 @@ function findTextNodes(element, match) {
     {
       acceptNode: (node) => {
         if (
-          node.parentNode.tagName === "INPUT" ||
-          node.parentNode.tagName === "TEXTAREA"
+          node.parentNode != null && 
+          (node.parentNode.tagName === "INPUT" ||
+          node.parentNode.tagName === "TEXTAREA")
         ) {
           return NodeFilter.FILTER_SKIP;
         }
@@ -109,6 +110,7 @@ function injectButtons(match, lightningAddress) {
     span.style.color = "white";
     span.style.fontFamily = "monospace";
     span.style.padding = "0px 2px 2px 2px";
+    span.style.fontSize = "12px";
     span.textContent = "Cashu token";
     if (totalAmount > 0) {
       span.textContent += ` (${totalAmount} sats)`;
@@ -185,8 +187,9 @@ async function init() {
         const newNodes = mutation.addedNodes;
         newNodes.forEach((node) => {
           if (
-            node.parentNode.tagName === "INPUT" ||
-            node.parentNode.tagName === "TEXTAREA"
+            node.parentNode != null && 
+            (node.parentNode.tagName === "INPUT" ||
+            node.parentNode.tagName === "TEXTAREA")
           ) {
             return;
           }
