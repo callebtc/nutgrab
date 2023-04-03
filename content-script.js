@@ -210,15 +210,14 @@ function init() {
             if (node.textContent.includes(match)) {
               injectButtons(match, lightningAddress);
             }
-          } 
-          // else if (node.nodeType === Node.ELEMENT_NODE) {
-          //   const textNodes = findTextNodes(node, match);
-          //   textNodes.forEach((textNode) => {
-          //     if (textNode.textContent.includes(match)) {
-          //       injectButtons(match, lightningAddress);
-          //     }
-          //   });
-          // }
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const textNodes = findTextNodes(node, match);
+            textNodes.forEach((textNode) => {
+              if (textNode.textContent.includes(match)) {
+                injectButtons(match, lightningAddress);
+              }
+            });
+          }
         });
       });
     });
