@@ -48,12 +48,19 @@ function injectButtons(match, lightningAddress) {
 
   textNodes.forEach((textNode) => {
     let totalAmount = 0;
+    let mint = "";
     try {
       const tokenWithoutPrefix = match.slice(6);
       const obj = JSON.parse(atob(tokenWithoutPrefix));
       obj.token[0].proofs.forEach((proof) => {
         totalAmount += proof.amount;
       });
+      mint = obj.token[0].mint;
+      // throw error if mint is null
+      if (mint == null) {
+        throw new Error("Mint is null");
+      }
+
     } catch {
       return;
     }
@@ -69,8 +76,17 @@ function injectButtons(match, lightningAddress) {
     container.style.alignItems = "center";
     container.style.backgroundColor = "#773cc3";
 
+    // Add the replaced text node to the container
+    const textNodeClone = textNode.cloneNode(true);
+    // remove match from text node
+    textNodeClone.textContent = textNodeClone.textContent.replace(
+      match,
+      ""
+    );
+
     // Create a button
     const button = document.createElement("button");
+    button.style.marginLeft = "5px";
     button.style.marginRight = "5px";
     button.style.padding = "5px 10px";
     button.style.fontSize = "10px";
@@ -80,9 +96,9 @@ function injectButtons(match, lightningAddress) {
     button.style.borderRadius = "10px";
     button.style.cursor = "pointer";
     button.style.fontFamily = "monospace";
-
-    // Set the button text and onclick handler
+    button.style.whiteSpace = "nowrap";
     button.textContent = "REDEEM";
+
     button.onclick = () => {
       window.open(url, "_blank");
     };
@@ -97,6 +113,9 @@ function injectButtons(match, lightningAddress) {
     if (totalAmount > 0) {
       span.textContent += ` (${totalAmount} sats)`;
     }
+    if (mint != "") {
+      span.textContent += ` ${mint}`;
+    }
 
     // Create a span to hold the copy icon
     const copyButton = document.createElement("span");
@@ -109,7 +128,7 @@ function injectButtons(match, lightningAddress) {
     copyButton.style.borderRadius = "10px";
     copyButton.style.color = "white";
     copyButton.style.fontFamily = "monospace";
-    // copyButton.innerHTML = "&#x1f4cb;";
+    copyButton.style.whiteSpace = "nowrap";
     copyButton.textContent = "copy";
 
     // Add an onclick event to copy the text and display "copied" text
@@ -133,55 +152,14 @@ function injectButtons(match, lightningAddress) {
     container.appendChild(button);
     container.appendChild(span);
     container.appendChild(copyButton);
-
+    
     // Replace the original text node with the container
     parent.replaceChild(replacementNode, textNode);
+
     replacementNode.insertAdjacentElement("afterend", container);
-    container.appendChild(replacementNode);
+    replacementNode.insertAdjacentElement("afterend", textNodeClone);
   });
 }
-
-// function init() {
-//   getBrowser().storage.local.get("lightningAddress", (data) => {
-//     const lightningAddress = data.lightningAddress || "";
-
-//     getBrowser().runtime.sendMessage({
-//       action: "getCashuTokens",
-//       data: getCashuTokens(),
-//     });
-
-//     getCashuTokens().forEach((match) => {
-//       injectButtons(match, lightningAddress);
-//     });
-//   });
-
-//   // Watch for changes to the DOM and call injectButtons() when new elements are added
-//   const observer = new MutationObserver((mutations) => {
-//     getCashuTokens().forEach((match) => {
-//       mutations.forEach((mutation) => {
-//         const newNodes = mutation.addedNodes;
-//         newNodes.forEach((node) => {
-//           if (node.nodeType === Node.TEXT_NODE) {
-//             if (node.textContent.includes(match)) {
-//               injectButtons(match, lightningAddress);
-//             }
-//           } else if (node.nodeType === Node.ELEMENT_NODE) {
-//             const textNodes = findTextNodes(node, match);
-//             textNodes.forEach((textNode) => {
-//               if (textNode.textContent.includes(match)) {
-//                 injectButtons(match, lightningAddress);
-//               }
-//             });
-//           }
-//         });
-//       });
-//     });
-//   });
-
-//   observer.observe(document.body, { childList: true, subtree: true });
-// }
-
-// init();
 
 async function init() {
   // read lightning address from local storage
