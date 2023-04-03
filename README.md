@@ -27,5 +27,5 @@ Press the "Load unpacked" button on the top left and select the `nutgrab` folder
 You can enter your Lightning address or LNURL-pay link in the extension window. 
 
 ## Screenshots
-![image](https://user-images.githubusercontent.com/93376500/229619036-a44c93e6-d44e-486f-927c-00b5d50de2ce.png)
+<img width="574" alt="image" src="https://user-images.githubusercontent.com/93376500/229619188-18b8fc70-d22a-4c34-a52d-4b2dee95a531.png">
 <img width="568" alt="image" src="https://user-images.githubusercontent.com/93376500/229619081-af12da2c-5117-4b3d-b901-8d47b718da19.png">
