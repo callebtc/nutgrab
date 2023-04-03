@@ -183,9 +183,15 @@ function injectButtons(match, lightningAddress) {
 
 // init();
 
-function init() {
-  const lightningAddress =
-    getBrowser().storage.local.get("lightningAddress") || "";
+async function init() {
+  // read lightning address from local storage
+  let lightningAddress =
+    (await getBrowser().storage.local.get("lightningAddress")) || "";
+
+  if (lightningAddress != "") {
+    lightningAddress = lightningAddress.lightningAddress;
+  }
+
   getCashuTokens().forEach((match) => {
     injectButtons(match, lightningAddress);
   });
